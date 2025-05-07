@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/index.js",
-    "dev": "ts-node-dev --respawn src/index.ts",
+    "dev": "nodemon --exec \"ts-node\" src/index.ts",
     "build": "tsc",
-    "lint": "eslint src --ext .ts,.js",
-    "lint:fix": "eslint --fix --ext .ts,.js",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --write .",
     "ci:format": "prettier --check .",
     "test": "jest"
@@ -20,7 +20,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/nadyavalin/node-nodejs-CRUD-API/issues"
   },
