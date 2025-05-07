@@ -1,11 +1,7 @@
 import type { User } from '../models/user';
-import { createUser } from '../models/user';
 
 export class InMemoryDb {
-  private users: User[] = [
-    createUser('John Doe', 'john@example.com'),
-    createUser('Jane Smith', 'jane@example.com'),
-  ];
+  private users: User[] = [];
 
   async getAllUsers(): Promise<User[]> {
     return this.users;
