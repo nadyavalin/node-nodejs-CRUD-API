@@ -2,14 +2,14 @@ import { v4 as uuidv4 } from 'uuid';
 
 export interface User {
   id: string;
-  name: string;
-  email: string;
-  createdAt: Date;
+  username: string;
+  age: number;
+  hobbies: string[];
 }
 
-export const createUser = (name: string, email: string): User => ({
+export const createUser = (username: string, age: number, hobbies: string[]): User => ({
   id: uuidv4(),
-  name,
-  email,
-  createdAt: new Date(),
+  username,
+  age,
+  hobbies,
 });

@@ -46,7 +46,7 @@ export const createUser = async (req: IncomingMessage, res: ServerResponse) => {
     });
 
     req.on('end', async () => {
-      let parsedBody: { name?: string; email?: string };
+      let parsedBody: { username?: string; age?: number; hobbies?: string[] };
       try {
         parsedBody = JSON.parse(body);
       } catch (error) {
@@ -55,15 +55,34 @@ export const createUser = async (req: IncomingMessage, res: ServerResponse) => {
         return;
       }
 
-      const { name, email } = parsedBody;
+      const { username, age, hobbies } = parsedBody;
 
-      if (!name || !email || name.trim() === '' || email.trim() === '') {
+      if (
+        !username ||
+        typeof username !== 'string' ||
+        username.trim() === '' ||
+        age === undefined ||
+        typeof age !== 'number' ||
+        !Number.isInteger(age) ||
+        age < 0 ||
+        !Array.isArray(hobbies)
+      ) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ message: 'Name and email are required' }));
+        res.end(
+          JSON.stringify({
+            message: 'Username (string), age (integer), and hobbies (array) are required',
+          })
+        );
         return;
       }
 
-      const newUser = createUserModel(name.trim(), email.trim());
+      if (!hobbies.every((hobby) => typeof hobby === 'string')) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ message: 'Hobbies must be an array of strings' }));
+        return;
+      }
+
+      const newUser = createUserModel(username.trim(), age, hobbies);
       await db.addUser(newUser);
 
       res.writeHead(201, { 'Content-Type': 'application/json' });
@@ -96,7 +115,7 @@ export const updateUser = async (userId: string, req: IncomingMessage, res: Serv
     });
 
     req.on('end', async () => {
-      let parsedBody: { name?: string; email?: string };
+      let parsedBody: { username?: string; age?: number; hobbies?: string[] };
       try {
         parsedBody = JSON.parse(body);
       } catch (error) {
@@ -105,19 +124,32 @@ export const updateUser = async (userId: string, req: IncomingMessage, res: Serv
         return;
       }
 
-      const { name, email } = parsedBody;
+      const { username, age, hobbies } = parsedBody;
 
-      if (!name || !email || name.trim() === '' || email.trim() === '') {
+      if (
+        !username ||
+        typeof username !== 'string' ||
+        username.trim() === '' ||
+        age === undefined ||
+        typeof age !== 'number' ||
+        !Number.isInteger(age) ||
+        age < 0 ||
+        !Array.isArray(hobbies)
+      ) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ message: 'Name and email are required' }));
+        res.end(
+          JSON.stringify({
+            message: 'Username (string), age (integer), and hobbies (array) are required',
+          })
+        );
         return;
       }
 
       const updatedUser: User = {
         id: userId,
-        name: name.trim(),
-        email: email.trim(),
-        createdAt: user.createdAt,
+        username: username.trim(),
+        age,
+        hobbies,
       };
 
       await db.updateUser(updatedUser);
@@ -125,6 +157,29 @@ export const updateUser = async (userId: string, req: IncomingMessage, res: Serv
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(updatedUser));
     });
+  } catch (error) {
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ message: `Internal server error: ${error}` }));
+  }
+};
+
+export const deleteUser = async (userId: string, res: ServerResponse) => {
+  try {
+    if (!validateUUID(userId)) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ message: 'Invalid userId' }));
+    }
+    const user = await db.getUserById(userId);
+    if (!user) {
+      res.writeHead(404, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ messages: 'User not found' }));
+      return;
+    }
+
+    await db.deleteUser(userId);
+
+    res.writeHead(204, { 'Content-Type': 'application/json' });
+    res.end();
   } catch (error) {
     res.writeHead(500, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ message: `Internal server error: ${error}` }));

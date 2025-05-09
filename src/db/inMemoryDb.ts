@@ -50,6 +50,11 @@ export class InMemoryDb {
       await this.saveUsers();
     }
   }
+
+  async deleteUser(id: string): Promise<void> {
+    this.users = this.users.filter((user) => user.id !== id);
+    await this.saveUsers();
+  }
 }
 
 export const db = new InMemoryDb();

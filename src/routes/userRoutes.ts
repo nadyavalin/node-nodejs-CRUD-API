@@ -1,5 +1,11 @@
 import { IncomingMessage, ServerResponse } from 'http';
-import { getAllUsers, getUserById, createUser, updateUser } from '../controllers/userController';
+import {
+  getAllUsers,
+  getUserById,
+  createUser,
+  updateUser,
+  deleteUser,
+} from '../controllers/userController';
 
 export const handleUserRoutes = async (req: IncomingMessage, res: ServerResponse) => {
   const { url, method } = req;
@@ -23,6 +29,10 @@ export const handleUserRoutes = async (req: IncomingMessage, res: ServerResponse
     }
     if (method === 'PUT') {
       await updateUser(userId, req, res);
+      return;
+    }
+    if (method === 'DELETE') {
+      await deleteUser(userId, res);
       return;
     }
   }
