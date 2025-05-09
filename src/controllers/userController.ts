@@ -14,6 +14,7 @@ export const getAllUsers = async (res: ServerResponse) => {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(users));
   } catch (error) {
+    await log('GET', '/api/users', `Internal server error: ${error}`);
     res.writeHead(500, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ message: `Internal server error: ${error}` }));
   }
@@ -51,6 +52,7 @@ export const getUserById = async (userId: string, res: ServerResponse) => {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(user));
   } catch (error) {
+    await log('GET', `/api/users/${userId}`, `Internal server error: ${error}`);
     res.writeHead(500, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ message: `Internal server error: ${error}` }));
   }
@@ -68,6 +70,7 @@ export const createUser = async (req: IncomingMessage, res: ServerResponse) => {
       try {
         parsedBody = JSON.parse(body);
       } catch (error) {
+        await log('POST', '/api/users', `Failed to create user: invalid JSON format: ${error}`);
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ message: `Invalid JSON format: ${error}` }));
         return;
@@ -85,6 +88,7 @@ export const createUser = async (req: IncomingMessage, res: ServerResponse) => {
         age < 0 ||
         !Array.isArray(hobbies)
       ) {
+        await log('POST', '/api/users', `Failed to create user: invalid data`);
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(
           JSON.stringify({
@@ -95,6 +99,11 @@ export const createUser = async (req: IncomingMessage, res: ServerResponse) => {
       }
 
       if (!hobbies.every((hobby) => typeof hobby === 'string')) {
+        await log(
+          'POST',
+          '/api/users',
+          `Failed to create user: hobbies must be an array of strings`
+        );
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ message: 'Hobbies must be an array of strings' }));
         return;
@@ -113,6 +122,7 @@ export const createUser = async (req: IncomingMessage, res: ServerResponse) => {
       res.end(JSON.stringify(newUser));
     });
   } catch (error) {
+    await log('POST', '/api/users', `Internal server error: ${error}`);
     res.writeHead(500, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ message: `Internal server error: ${error}` }));
   }
@@ -121,6 +131,7 @@ export const createUser = async (req: IncomingMessage, res: ServerResponse) => {
 export const updateUser = async (userId: string, req: IncomingMessage, res: ServerResponse) => {
   try {
     if (!validateUUID(userId)) {
+      await log('PUT', `/api/users/${userId}`, `Failed to update user: invalid userId=${userId}`);
       res.writeHead(400, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ message: 'Invalid userId' }));
       return;
@@ -128,6 +139,11 @@ export const updateUser = async (userId: string, req: IncomingMessage, res: Serv
 
     const user = await db.getUserById(userId);
     if (!user) {
+      await log(
+        'PUT',
+        `/api/users/${userId}`,
+        `Failed to update user: user not found, id=${userId}`
+      );
       res.writeHead(404, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ message: 'User not found' }));
       return;
@@ -143,6 +159,11 @@ export const updateUser = async (userId: string, req: IncomingMessage, res: Serv
       try {
         parsedBody = JSON.parse(body);
       } catch (error) {
+        await log(
+          'PUT',
+          `/api/users/${userId}`,
+          `Failed to update user: invalid JSON format: ${error}`
+        );
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ message: `Invalid JSON format: ${error}` }));
         return;
@@ -160,6 +181,7 @@ export const updateUser = async (userId: string, req: IncomingMessage, res: Serv
         age < 0 ||
         !Array.isArray(hobbies)
       ) {
+        await log('PUT', `/api/users/${userId}`, `Failed to update user: invalid data`);
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(
           JSON.stringify({
@@ -170,6 +192,11 @@ export const updateUser = async (userId: string, req: IncomingMessage, res: Serv
       }
 
       if (!hobbies.every((hobby) => typeof hobby === 'string')) {
+        await log(
+          'PUT',
+          `/api/users/${userId}`,
+          `Failed to update user: hobbies must be an array of strings`
+        );
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ message: 'Hobbies must be an array of strings' }));
         return;
@@ -194,6 +221,7 @@ export const updateUser = async (userId: string, req: IncomingMessage, res: Serv
       res.end(JSON.stringify(updatedUser));
     });
   } catch (error) {
+    await log('PUT', `/api/users/${userId}`, `Internal server error: ${error}`);
     res.writeHead(500, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ message: `Internal server error: ${error}` }));
   }
@@ -202,6 +230,11 @@ export const updateUser = async (userId: string, req: IncomingMessage, res: Serv
 export const deleteUser = async (userId: string, res: ServerResponse) => {
   try {
     if (!validateUUID(userId)) {
+      await log(
+        'DELETE',
+        `/api/users/${userId}`,
+        `Failed to delete user: invalid userId=${userId}`
+      );
       res.writeHead(400, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ message: 'Invalid userId' }));
       return;
@@ -209,6 +242,11 @@ export const deleteUser = async (userId: string, res: ServerResponse) => {
 
     const user = await db.getUserById(userId);
     if (!user) {
+      await log(
+        'DELETE',
+        `/api/users/${userId}`,
+        `Failed to delete user: user not found, id=${userId}`
+      );
       res.writeHead(404, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ message: 'User not found' }));
       return;
@@ -221,6 +259,7 @@ export const deleteUser = async (userId: string, res: ServerResponse) => {
     res.writeHead(204, { 'Content-Type': 'application/json' });
     res.end();
   } catch (error) {
+    await log('DELETE', `/api/users/${userId}`, `Internal server error: ${error}`);
     res.writeHead(500, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ message: `Internal server error: ${error}` }));
   }

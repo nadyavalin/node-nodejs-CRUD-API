@@ -1,6 +1,5 @@
 import path from 'path';
 import fs from 'fs/promises';
-import { readFileSync } from 'fs';
 import { type User } from '../models/user';
 
 export class InMemoryDb {
@@ -8,17 +7,23 @@ export class InMemoryDb {
   private readonly filePath: string;
 
   constructor() {
-    this.filePath = path.resolve(__dirname, '../data/users.json');
-    this.users = this.loadUsersSync();
+    const nodeEnv = process.env.NODE_ENV || 'development';
+    console.log(`InMemoryDb: NODE_ENV=${nodeEnv}`);
+    const baseDir = nodeEnv === 'production' ? 'dist' : 'src';
+    this.filePath = path.join(process.cwd(), baseDir, 'data', 'users.json');
+    console.log(`InMemoryDb: filePath=${this.filePath}`);
+    this.loadUsers();
   }
 
-  private loadUsersSync(): User[] {
+  private async loadUsers(): Promise<void> {
     try {
-      const data = readFileSync(this.filePath, 'utf8');
-      return JSON.parse(data) as User[];
+      const data = await fs.readFile(this.filePath, 'utf-8');
+      this.users = JSON.parse(data);
     } catch (error) {
-      console.warn(`Failed to load users.json, initializing with empty array: ${error}`);
-      return [];
+      console.error(`Failed to load users.json, initializing with empty array: ${error}`);
+      this.users = [];
+      await fs.mkdir(path.dirname(this.filePath), { recursive: true });
+      await fs.writeFile(this.filePath, '[]');
     }
   }
 
@@ -31,6 +36,7 @@ export class InMemoryDb {
   }
 
   async getAllUsers(): Promise<User[]> {
+    // throw new Error('Simulated database error');
     return this.users;
   }
 

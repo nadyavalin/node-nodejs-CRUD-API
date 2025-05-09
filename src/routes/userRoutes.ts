@@ -6,6 +6,7 @@ import {
   updateUser,
   deleteUser,
 } from '../controllers/userController';
+import { log } from '../utils/logger';
 
 export const handleUserRoutes = async (req: IncomingMessage, res: ServerResponse) => {
   const { url, method } = req;
@@ -37,6 +38,8 @@ export const handleUserRoutes = async (req: IncomingMessage, res: ServerResponse
     }
   }
 
+  await log(method || 'UNKNOWN', url || 'unknown', 'Requested non-existing resource');
+
   res.writeHead(404, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify({ message: 'Not found' }));
+  res.end(JSON.stringify({ message: 'Resource not found' }));
 };

@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/index.js",
-    "dev": "nodemon --exec \"ts-node\" src/index.ts",
-    "build": "tsc",
+    "build": "tsc && node -e \"const fs = require('fs'); fs.mkdirSync('src/data', { recursive: true }); if (!fs.existsSync('src/data/users.json')) fs.writeFileSync('src/data/users.json', '[]'); fs.mkdirSync('dist/data', { recursive: true }); fs.copyFileSync('src/data/users.json', 'dist/data/users.json');\"",
+    "start:dev": "cross-env NODE_ENV=development ts-node-dev --respawn src/index.ts",
+    "start:prod": "cross-env NODE_ENV=production npm run build && cross-env NODE_ENV=production node dist/index.js",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --write .",
