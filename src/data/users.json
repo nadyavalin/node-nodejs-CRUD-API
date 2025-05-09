@@ -1,0 +1,20 @@
+[
+  {
+    "id": "7f777660-218c-4134-b4f8-1c7b92ef36bc",
+    "name": "Iliya",
+    "email": "iliya@mail.ru",
+    "createdAt": "2025-05-09T15:03:02.904Z"
+  },
+  {
+    "id": "5db13ec7-8351-4d73-910e-af2e2055eecc",
+    "name": "Nadya",
+    "email": "nadya@mail.ru",
+    "createdAt": "2025-05-09T15:03:50.488Z"
+  },
+  {
+    "id": "680d83ca-41b2-48b4-9022-5d66760a132c",
+    "name": "George Updated",
+    "email": "george.updated@mail.ru",
+    "createdAt": "2025-05-09T15:04:18.137Z"
+  }
+]

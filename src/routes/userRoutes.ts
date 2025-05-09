@@ -1,5 +1,5 @@
 import { IncomingMessage, ServerResponse } from 'http';
-import { getAllUsers, getUserById, createUser } from '../controllers/userController';
+import { getAllUsers, getUserById, createUser, updateUser } from '../controllers/userController';
 
 export const handleUserRoutes = async (req: IncomingMessage, res: ServerResponse) => {
   const { url, method } = req;
@@ -15,10 +15,16 @@ export const handleUserRoutes = async (req: IncomingMessage, res: ServerResponse
   }
 
   const userIdMatch = url?.match(/^\/api\/users\/(.+)$/);
-  if (userIdMatch && method === 'GET') {
+  if (userIdMatch) {
     const userId = userIdMatch[1];
-    await getUserById(userId, res);
-    return;
+    if (method === 'GET') {
+      await getUserById(userId, res);
+      return;
+    }
+    if (method === 'PUT') {
+      await updateUser(userId, req, res);
+      return;
+    }
   }
 
   res.writeHead(404, { 'Content-Type': 'application/json' });
