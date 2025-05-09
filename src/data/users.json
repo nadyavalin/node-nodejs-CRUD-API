@@ -1,33 +1,26 @@
 [
   {
-    "id": "27d42769-159f-4c20-b48b-09eb62db95a3",
+    "id": "1cc4327e-ebe8-4b50-b86a-0751a557d62a",
     "username": "Nadya",
-    "age": 37,
-    "hobbies": [
-      "programming",
-      "learning English",
-      "learning everything"
-    ]
+    "age": 36,
+    "hobbies": ["programming", "learning English", "learning everything"]
   },
   {
-    "id": "d35153a2-4a8f-4bee-b31d-993e2a57f179",
+    "id": "3c23a6db-4f09-42c6-b62b-fdc00fab9a98",
     "username": "Ilya",
     "age": 49,
-    "hobbies": [
-      "working",
-      "planting",
-      "programming"
-    ]
+    "hobbies": ["working", "planting", "programming"]
   },
   {
-    "id": "78dd76db-1a13-4d51-8e1d-e0159d3828e0",
+    "id": "5401cfca-d52b-40b4-b8a6-d25be2b56c36",
     "username": "George",
     "age": 15,
-    "hobbies": [
-      "playing computer games",
-      "walking in the yard",
-      "sleeping",
-      "eating"
-    ]
+    "hobbies": ["playing computer games", "walking in the yard", "sleeping", "eating"]
+  },
+  {
+    "id": "9ee69416-707e-4cfc-832a-3424b06d5d7d",
+    "username": "Alice",
+    "age": 25,
+    "hobbies": ["nothing"]
   }
 ]
