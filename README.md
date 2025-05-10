@@ -354,6 +354,49 @@ Users are stored in `users.json` with the following structure:
       }
       ```
 
+### Simulating a Server Error
+
+**Description:** To simulate an internal server error, you can temporarily modify the code to throw an unhandled error (for testing purposes only). For example, edit `src/controllers/userController.ts` to throw an error in createUser:
+
+```ts
+async createUser(req: IncomingMessage, res: ServerResponse): Promise<void> {
+  throw new Error('Simulated server error');
+}
+```
+
+1. **Rebuild the project**:
+
+   ```bash
+   npm run build
+   ```
+
+2. **Restart the server**:
+
+   ```bash
+   npm run start:multi
+   ```
+
+3. **Send a POST request**:
+
+- **Method**: POST
+- **URL**: `http://localhost:4000/api/users`
+- **Body**:
+  ```json
+  {
+    "username": "Test User",
+    "age": 25,
+    "hobbies": ["reading", "coding"]
+  }
+  ```
+- **Expected Response**:
+  - **Status**: 500 Internal Server Error
+  - **Body**:
+    ```json
+    {
+      "message": "Internal Server Error"
+    }
+    ```
+
 ### Testing Multi-Process Synchronization
 
 To verify that user data is consistent across workers:
