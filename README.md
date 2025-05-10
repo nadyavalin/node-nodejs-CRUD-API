@@ -11,11 +11,13 @@ This is a Node.js-based RESTful CRUD API for managing user records. The applicat
 - **Testing**: Includes Jest tests for API endpoints
 
 ## Technical requirements due to the task assignment:
+
 - Language: **TypeScript**
 - **Node.js**: Version 22.x.x version (22.14.0 or upper)
 - **Libraries / dependencies**: `nodemon`, `dotenv`, `cross-env`, `typescript`, `ts-node`, `ts-node-dev`, `eslint` and its plugins, `webpack-cli`, `webpack` and its plugins and loaders, `prettier`, `uuid`
 
 ## Other technical requirements:
+
 - **npm**: Version 10.x or higher
 - **Postman**: For testing API endpoints
 - **Git**: For cloning the repository
