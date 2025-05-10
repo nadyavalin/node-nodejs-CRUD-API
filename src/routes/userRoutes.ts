@@ -9,6 +9,7 @@ import {
 import { InMemoryDb } from '../db/inMemoryDb';
 import { db } from '../db/inMemoryDb';
 import { log } from '../utils/logger';
+import { colorize } from '../utils/colorize';
 
 export const handleUserRoutes = async (
   req: IncomingMessage,
@@ -16,6 +17,10 @@ export const handleUserRoutes = async (
   customDb: InMemoryDb = db
 ) => {
   const { url, method } = req;
+
+  console.log(
+    `${colorize(`Handling request on worker port ${process.env.WORKER_PORT || process.env.PORT}`, 'blue', ['bold'])}`
+  );
 
   if (url === '/api/users' && method === 'GET') {
     await getAllUsers(res, customDb);
