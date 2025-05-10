@@ -1,11 +1,11 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import { validate as validateUUID } from 'uuid';
-import { db } from '../db/inMemoryDb';
+import { InMemoryDb } from '../db/inMemoryDb';
 import type { User } from '../models/user';
 import { createUser as createUserModel } from '../models/user';
 import { log } from '../utils/logger';
 
-export const getAllUsers = async (res: ServerResponse) => {
+export const getAllUsers = async (res: ServerResponse, db: InMemoryDb) => {
   try {
     const users: User[] = await db.getAllUsers();
 
@@ -20,7 +20,7 @@ export const getAllUsers = async (res: ServerResponse) => {
   }
 };
 
-export const getUserById = async (userId: string, res: ServerResponse) => {
+export const getUserById = async (userId: string, res: ServerResponse, db: InMemoryDb) => {
   try {
     if (!validateUUID(userId)) {
       await log('GET', `/api/users/${userId}`, `Failed to fetch user: invalid userId=${userId}`);
@@ -58,7 +58,7 @@ export const getUserById = async (userId: string, res: ServerResponse) => {
   }
 };
 
-export const createUser = async (req: IncomingMessage, res: ServerResponse) => {
+export const createUser = async (req: IncomingMessage, res: ServerResponse, db: InMemoryDb) => {
   try {
     let body = '';
     req.on('data', (chunk) => {
@@ -128,7 +128,12 @@ export const createUser = async (req: IncomingMessage, res: ServerResponse) => {
   }
 };
 
-export const updateUser = async (userId: string, req: IncomingMessage, res: ServerResponse) => {
+export const updateUser = async (
+  userId: string,
+  req: IncomingMessage,
+  res: ServerResponse,
+  db: InMemoryDb
+) => {
   try {
     if (!validateUUID(userId)) {
       await log('PUT', `/api/users/${userId}`, `Failed to update user: invalid userId=${userId}`);
@@ -227,7 +232,7 @@ export const updateUser = async (userId: string, req: IncomingMessage, res: Serv
   }
 };
 
-export const deleteUser = async (userId: string, res: ServerResponse) => {
+export const deleteUser = async (userId: string, res: ServerResponse, db: InMemoryDb) => {
   try {
     if (!validateUUID(userId)) {
       await log(

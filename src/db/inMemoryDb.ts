@@ -8,10 +8,13 @@ export class InMemoryDb {
 
   constructor() {
     const nodeEnv = process.env.NODE_ENV || 'development';
-    console.log(`InMemoryDb: NODE_ENV=${nodeEnv}`);
-    const baseDir = nodeEnv === 'production' ? 'dist' : 'src';
-    this.filePath = path.join(process.cwd(), baseDir, 'data', 'users.json');
-    console.log(`InMemoryDb: filePath=${this.filePath}`);
+    if (process.env.TEST_INVOCATION) {
+      this.filePath = path.join(process.cwd(), 'tests', 'data', 'test-users.json');
+    } else if (nodeEnv === 'production') {
+      this.filePath = path.join(process.cwd(), 'dist', 'data', 'users.json');
+    } else {
+      this.filePath = path.join(process.cwd(), 'src', 'data', 'users.json');
+    }
     this.loadUsers();
   }
 
@@ -59,6 +62,11 @@ export class InMemoryDb {
 
   async deleteUser(id: string): Promise<void> {
     this.users = this.users.filter((user) => user.id !== id);
+    await this.saveUsers();
+  }
+
+  async resetUsers(): Promise<void> {
+    this.users = [];
     await this.saveUsers();
   }
 }

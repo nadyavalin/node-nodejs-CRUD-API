@@ -6,18 +6,24 @@ import {
   updateUser,
   deleteUser,
 } from '../controllers/userController';
+import { InMemoryDb } from '../db/inMemoryDb';
+import { db } from '../db/inMemoryDb';
 import { log } from '../utils/logger';
 
-export const handleUserRoutes = async (req: IncomingMessage, res: ServerResponse) => {
+export const handleUserRoutes = async (
+  req: IncomingMessage,
+  res: ServerResponse,
+  customDb: InMemoryDb = db
+) => {
   const { url, method } = req;
 
   if (url === '/api/users' && method === 'GET') {
-    await getAllUsers(res);
+    await getAllUsers(res, customDb);
     return;
   }
 
   if (url === '/api/users' && method === 'POST') {
-    await createUser(req, res);
+    await createUser(req, res, customDb);
     return;
   }
 
@@ -25,15 +31,15 @@ export const handleUserRoutes = async (req: IncomingMessage, res: ServerResponse
   if (userIdMatch) {
     const userId = userIdMatch[1];
     if (method === 'GET') {
-      await getUserById(userId, res);
+      await getUserById(userId, res, customDb);
       return;
     }
     if (method === 'PUT') {
-      await updateUser(userId, req, res);
+      await updateUser(userId, req, res, customDb);
       return;
     }
     if (method === 'DELETE') {
-      await deleteUser(userId, res);
+      await deleteUser(userId, res, customDb);
       return;
     }
   }
