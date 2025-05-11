@@ -19,8 +19,8 @@ This is a Node.js-based RESTful CRUD API for managing user records. The applicat
 ## Other technical requirements:
 
 - **npm**: Version 10.x or higher
-- **Postman**: For testing API endpoints
 - **Git**: For cloning the repository
+- **Postman**: For testing API endpoints
 
 ## Installation
 
@@ -136,7 +136,7 @@ npm run test
 
 ## Using the API with Postman
 
-The API provides endpoints for managing users. Below are instructions for testing **successful** and **unsuccessful** requests using Postman (for example). All requests should be sent to `http://localhost:4000/api` (the load balancer), which distributes them to worker processes.
+The API provides endpoints for managing users. Below are instructions for testing **successful** and **unsuccessful** requests using Postman. All requests should be sent to `http://localhost:4000/api` (the load balancer), which distributes them to worker processes.
 
 ### User Data Format
 
@@ -153,76 +153,14 @@ Users are stored in `users.json` with the following structure:
 
 ### Endpoints
 
-#### 1. GET /api/users
-
-- **Description**: Retrieve all users.
-- **Successful Request**:
-  - **Method**: GET
-  - **URL**: `http://localhost:4000/api/users`
-  - **Headers**: None
-  - **Expected Response**:
-    - **Status**: 200 OK
-    - **Body**:
-      ```json
-      [
-        {
-          "id": "<uuid>",
-          "username": "Test User",
-          "age": 25,
-          "hobbies": ["reading"]
-        }
-      ]
-      ```
-- **Unsuccessful Request**:
-  - Not applicable (endpoint always returns an array, empty if no users).
-
-#### 2. GET /api/users/:id
-
-- **Description**: Retrieve a user by ID.
-- **Successful Request**:
-  - **Method**: GET
-  - **URL**: `http://localhost:4000/api/users/<valid-uuid>`
-  - **Headers**: None
-  - **Expected Response**:
-    - **Status**: 200 OK
-    - **Body**:
-      ```json
-      {
-        "id": "<uuid>",
-        "username": "Test User",
-        "age": 25,
-        "hobbies": ["reading"]
-      }
-      ```
-- **Unsuccessful Request** (Invalid ID):
-  - **URL**: `http://localhost:4000/api/users/invalid-id`
-  - **Expected Response**:
-    - **Status**: 400 Bad Request
-    - **Body**:
-      ```json
-      {
-        "message": "Invalid user ID"
-      }
-      ```
-- **Unsuccessful Request** (Non-existent ID):
-  - **URL**: `http://localhost:4000/api/users/<non-existent-uuid>`
-  - **Expected Response**:
-    - **Status**: 404 Not Found
-    - **Body**:
-      ```json
-      {
-        "message": "User not found"
-      }
-      ```
-
-#### 3. POST /api/users
+#### 1. POST /api/users
 
 - **Description**: Create a new user.
 - **Successful Request**:
   - **Method**: POST
   - **URL**: `http://localhost:4000/api/users`
   - **Headers**: `Content-Type: application/json`
-  - **Body**:
+  - **Body** (_row_, _JSON_):
     ```json
     {
       "username": "Test User",
@@ -242,7 +180,7 @@ Users are stored in `users.json` with the following structure:
       }
       ```
 - **Unsuccessful Request** (Invalid Data):
-  - **Body**:
+  - **Body** (_row_, _JSON_):
     ```json
     {
       "username": "",
@@ -255,7 +193,69 @@ Users are stored in `users.json` with the following structure:
     - **Body**:
       ```json
       {
-        "message": "Invalid user data"
+        "message": "Invalid user data: Username (string), age (integer), and hobbies (array) are required"
+      }
+      ```
+
+#### 2. GET /api/users
+
+- **Description**: Retrieve all users.
+- **Successful Request**:
+  - **Method**: GET
+  - **URL**: `http://localhost:4000/api/users`
+  - **Headers**: None
+  - **Expected Response**:
+    - **Status**: 200 OK
+    - **Body** (_none_):
+      ```json
+      [
+        {
+          "id": "<uuid>",
+          "username": "Test User",
+          "age": 25,
+          "hobbies": ["reading"]
+        }
+      ]
+      ```
+- **Unsuccessful Request**:
+  - Not applicable (endpoint always returns an array, empty if no users).
+
+#### 3. GET /api/users/:id
+
+- **Description**: Retrieve a user by ID.
+- **Successful Request**:
+  - **Method**: GET
+  - **URL**: `http://localhost:4000/api/users/<valid-uuid>`
+  - **Headers**: None
+  - **Expected Response**:
+    - **Status**: 200 OK
+    - **Body** (_none_):
+      ```json
+      {
+        "id": "<uuid>",
+        "username": "Test User",
+        "age": 25,
+        "hobbies": ["reading"]
+      }
+      ```
+- **Unsuccessful Request** (Invalid ID):
+  - **URL**: `http://localhost:4000/api/users/invalid-id`
+  - **Expected Response**:
+    - **Status**: 400 Bad Request
+    - **Body** (_none_):
+      ```json
+      {
+        "message": "Invalid userId"
+      }
+      ```
+- **Unsuccessful Request** (Non-existent ID):
+  - **URL**: `http://localhost:4000/api/users/<non-existent-uuid>`
+  - **Expected Response**:
+    - **Status**: 404 Not Found
+    - **Body** (_none_):
+      ```json
+      {
+        "message": "User not found"
       }
       ```
 
@@ -266,7 +266,7 @@ Users are stored in `users.json` with the following structure:
   - **Method**: PUT
   - **URL**: `http://localhost:4000/api/users/<valid-uuid>`
   - **Headers**: `Content-Type: application/json`
-  - **Body**:
+  - **Body** (_row_, _JSON_):
     ```json
     {
       "username": "Updated User",
@@ -289,24 +289,24 @@ Users are stored in `users.json` with the following structure:
   - **URL**: `http://localhost:4000/api/users/invalid-id`
   - **Expected Response**:
     - **Status**: 400 Bad Request
-    - **Body**:
+    - **Body** (_row_, _JSON_):
       ```json
       {
-        "message": "Invalid user ID"
+        "message": "Invalid userId"
       }
       ```
 - **Unsuccessful Request** (Non-existent ID):
   - **URL**: `http://localhost:4000/api/users/<non-existent-uuid>`
   - **Expected Response**:
     - **Status**: 404 Not Found
-    - **Body**:
+    - **Body** (_row_, _JSON_):
       ```json
       {
         "message": "User not found"
       }
       ```
 - **Unsuccessful Request** (Invalid Data):
-  - **Body**:
+  - **Body** (_row_, _JSON_):
     ```json
     {
       "username": "",
@@ -327,27 +327,29 @@ Users are stored in `users.json` with the following structure:
 
 - **Description**: Delete a user by ID.
 - **Successful Request**:
+
   - **Method**: DELETE
   - **URL**: `http://localhost:4000/api/users/<valid-uuid>`
   - **Headers**: None
   - **Expected Response**:
     - **Status**: 204 No Content
-    - **Body**: Empty
+    - **Body** (_none_): Empty
+
 - **Unsuccessful Request** (Invalid ID):
   - **URL**: `http://localhost:4000/api/users/invalid-id`
   - **Expected Response**:
     - **Status**: 400 Bad Request
-    - **Body**:
+    - **Body** (_none_):
       ```json
       {
-        "message": "Invalid user ID"
+        "message": "Invalid userId"
       }
       ```
 - **Unsuccessful Request** (Non-existent ID):
   - **URL**: `http://localhost:4000/api/users/<non-existent-uuid>`
   - **Expected Response**:
     - **Status**: 404 Not Found
-    - **Body**:
+    - **Body** (_none_):
       ```json
       {
         "message": "User not found"
@@ -356,12 +358,20 @@ Users are stored in `users.json` with the following structure:
 
 ### Simulating a Server Error
 
-**Description:** To simulate an internal server error, you can temporarily modify the code to throw an unhandled error (for testing purposes only). For example, edit `src/controllers/userController.ts` to throw an error in createUser:
+**Description:** To simulate an internal server error, you can temporarily modify the code to throw an unhandled error (for testing purposes only).
+
+#### First option:
+
+For example, edit `src/controllers/userController.ts` to throw an error in getAllUsers _(on the line 8)_:
 
 ```ts
-async createUser(req: IncomingMessage, res: ServerResponse): Promise<void> {
-  throw new Error('Simulated server error');
-}
+export const getAllUsers = async (res: ServerResponse, db: InMemoryDb) => {
+  try {
+    throw new Error('Simulated server error');
+    // other code
+  }
+  // other code
+};
 ```
 
 1. **Rebuild the project**:
@@ -380,7 +390,54 @@ async createUser(req: IncomingMessage, res: ServerResponse): Promise<void> {
 
 - **Method**: POST
 - **URL**: `http://localhost:4000/api/users`
-- **Body**:
+- **Body** (_row_, _JSON_):
+  ```json
+  {
+    "username": "Test User",
+    "age": 25,
+    "hobbies": ["reading", "coding"]
+  }
+  ```
+- **Expected Response**:
+  - **Status**: 500 Internal Server Error
+  - **Body**:
+    ```json
+    {
+      "message": "Internal Server Error"
+    }
+    ```
+
+#### Second option:
+
+For example, edit `src/controllers/userController.ts` to throw an error in createUser _(on the line 61)_:
+
+```ts
+export const createUser = async (req: IncomingMessage, res: ServerResponse, db: InMemoryDb) => {
+  try {
+    throw new Error('Simulated server error');
+    // other code
+  }
+  // other code
+};
+```
+
+1. **Rebuild the project**:
+
+   ```bash
+   npm run build
+   ```
+
+2. **Restart the server**:
+
+   ```bash
+   npm run start:multi
+   ```
+
+3. **Send a POST request**:
+
+- **Method**: POST
+- **URL**: `http://localhost:4000/api/users`
+- **Body** (_row_, _JSON_):
   ```json
   {
     "username": "Test User",

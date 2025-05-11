@@ -16,7 +16,7 @@ export const getAllUsers = async (res: ServerResponse, db: InMemoryDb) => {
   } catch (error) {
     await log('GET', '/api/users', `Internal server error: ${error}`);
     res.writeHead(500, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ message: `Internal server error: ${error}` }));
+    res.end(JSON.stringify({ message: `Internal server error` }));
   }
 };
 
@@ -54,7 +54,7 @@ export const getUserById = async (userId: string, res: ServerResponse, db: InMem
   } catch (error) {
     await log('GET', `/api/users/${userId}`, `Internal server error: ${error}`);
     res.writeHead(500, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ message: `Internal server error: ${error}` }));
+    res.end(JSON.stringify({ message: `Internal server error` }));
   }
 };
 
@@ -77,7 +77,6 @@ export const createUser = async (req: IncomingMessage, res: ServerResponse, db: 
       }
 
       const { username, age, hobbies } = parsedBody;
-
       if (
         !username ||
         typeof username !== 'string' ||
@@ -88,11 +87,16 @@ export const createUser = async (req: IncomingMessage, res: ServerResponse, db: 
         age < 0 ||
         !Array.isArray(hobbies)
       ) {
-        await log('POST', '/api/users', `Failed to create user: invalid data`);
+        await log(
+          'POST',
+          '/api/users',
+          `Invalid user data: Username (string), age (integer), and hobbies (array) are required`
+        );
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(
           JSON.stringify({
-            message: 'Username (string), age (integer), and hobbies (array) are required',
+            message:
+              'Invalid user data: Username (string), age (integer), and hobbies (array) are required',
           })
         );
         return;
@@ -124,7 +128,7 @@ export const createUser = async (req: IncomingMessage, res: ServerResponse, db: 
   } catch (error) {
     await log('POST', '/api/users', `Internal server error: ${error}`);
     res.writeHead(500, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ message: `Internal server error: ${error}` }));
+    res.end(JSON.stringify({ message: `Internal server error` }));
   }
 };
 
@@ -190,7 +194,8 @@ export const updateUser = async (
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(
           JSON.stringify({
-            message: 'Username (string), age (integer), and hobbies (array) are required',
+            message:
+              'Invalid user data: Username (string), age (integer), and hobbies (array) are required',
           })
         );
         return;
@@ -228,7 +233,7 @@ export const updateUser = async (
   } catch (error) {
     await log('PUT', `/api/users/${userId}`, `Internal server error: ${error}`);
     res.writeHead(500, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ message: `Internal server error: ${error}` }));
+    res.end(JSON.stringify({ message: `Internal server error` }));
   }
 };
 
@@ -266,6 +271,6 @@ export const deleteUser = async (userId: string, res: ServerResponse, db: InMemo
   } catch (error) {
     await log('DELETE', `/api/users/${userId}`, `Internal server error: ${error}`);
     res.writeHead(500, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ message: `Internal server error: ${error}` }));
+    res.end(JSON.stringify({ message: `Internal server error` }));
   }
 };
