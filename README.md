@@ -362,7 +362,7 @@ Users are stored in `users.json` with the following structure:
 
 #### First option:
 
-For example, edit `src/controllers/userController.ts` to throw an error in getAllUsers _(on the line 8)_:
+For example, edit `src/controllers/getAllUsers.ts` to throw an error in getAllUsers:
 
 ```ts
 export const getAllUsers = async (res: ServerResponse, db: InMemoryDb) => {
@@ -409,7 +409,7 @@ export const getAllUsers = async (res: ServerResponse, db: InMemoryDb) => {
 
 #### Second option:
 
-For example, edit `src/controllers/userController.ts` to throw an error in createUser _(on the line 61)_:
+For example, edit `src/controllers/createUser.ts` to throw an error in createUser:
 
 ```ts
 export const createUser = async (req: IncomingMessage, res: ServerResponse, db: InMemoryDb) => {
@@ -488,14 +488,21 @@ The load balancer uses Round-robin to distribute requests, and a file-locking me
 
 ## Project Structure
 
+## Project Structure
+
 - `src/`: TypeScript source code.
-  - `index.ts`: Main entry point for single-process mode.
-  - `loadBalancer.ts`: Load balancer for multi-process mode.
-  - `db/inMemoryDb.ts`: Manages user data in `users.json`.
-  - `routes/userRoutes.ts`: Handles HTTP routes.
-  - `controllers/userController.ts`: Business logic for CRUD operations.
-  - `models/user.ts`: User data model.
-- `dist/`: Compiled JavaScript output.
-- `tests/`: Jest tests.
-- `logs/`: Application logs.
-- `src/data/` and `dist/data/`: Store `users.json`.
+  - `index.ts`: Main entry point for single-process mode and worker processes in multi-process mode
+  - `loadBalancer.ts`: Load balancer for distributing requests across worker processes in multi-process mode
+  - `db/inMemoryDb.ts`: Manages user data storage and synchronization in `users.json` with file-locking
+  - `routes/userRoutes.ts`: Defines HTTP routes and handles incoming requests for user-related endpoints
+  - `controllers/`: Contains logic for handling CRUD operations on users
+    - `createUser.ts`: Handles the creation of a new user (`POST /api/users`) - CREATE
+    - `getAllUsers.ts`: Retrieves the list of all users (`GET /api/users`) - READ
+    - `getUserById.ts`: Retrieves a user by their ID (`GET /api/users/:id`) - READ
+    - `updateUser.ts`: Updates an existing user by their ID (`PUT /api/users/:id`) - UPDATE
+    - `deleteUser.ts`: Deletes a user by their ID (`DELETE /api/users/:id`) - DELETE
+  - `models/user.ts`: Defines the user data model (`id`, `username`, `age`, `hobbies`)
+- `dist/`: Compiled JavaScript output
+- `tests/`: Jest tests for API endpoints
+- `logs/`: Application logs (`app.log`)
+- `src/data/` and `dist/data/`: Store `users.json` for user data persistence

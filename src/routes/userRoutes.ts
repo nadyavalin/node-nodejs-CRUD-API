@@ -1,15 +1,13 @@
 import { IncomingMessage, ServerResponse } from 'http';
-import {
-  getAllUsers,
-  getUserById,
-  createUser,
-  updateUser,
-  deleteUser,
-} from '../controllers/userController';
 import { InMemoryDb } from '../db/inMemoryDb';
 import { db } from '../db/inMemoryDb';
 import { log } from '../utils/logger';
 import { colorize } from '../utils/colorize';
+import { getAllUsers } from '../controllers/getAllUsers';
+import { createUser } from '../controllers/createUser';
+import { getUserById } from '../controllers/getUserById';
+import { updateUser } from '../controllers/updateUser';
+import { deleteUser } from '../controllers/deleteUser';
 
 export const handleUserRoutes = async (
   req: IncomingMessage,
