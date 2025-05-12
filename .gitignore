@@ -1,0 +1,8 @@
+node_modules
+dist
+.env
+coverage/
+logs/
+src/data/users.json.lock
+tests/data/test-users.json
+tests/data/test-users.json.lock
