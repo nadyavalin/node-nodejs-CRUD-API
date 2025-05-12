@@ -8,7 +8,7 @@ import { colorize } from './utils/colorize';
 
 dotenv.config();
 
-const BASE_PORT = parseInt(process.env.PORT || '', 10);
+const BASE_PORT = parseInt(process.env.PORT || '4000', 10);
 const NUM_WORKERS = availableParallelism() - 1;
 const WORKER_PORTS = Array.from({ length: NUM_WORKERS }, (_, i) => BASE_PORT + i + 1);
 

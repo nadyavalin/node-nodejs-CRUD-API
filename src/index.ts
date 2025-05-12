@@ -7,7 +7,7 @@ import { handleUserRoutes } from './routes/userRoutes';
 
 dotenv.config();
 
-const BASE_PORT = parseInt(process.env.PORT || '', 10);
+const BASE_PORT = parseInt(process.env.PORT || '4000', 10);
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 if (!BASE_PORT || isNaN(BASE_PORT)) {
@@ -46,7 +46,9 @@ if (cluster.isPrimary && process.env.START_MULTI) {
     }
   });
 } else {
-  const PORT = process.env.START_MULTI ? parseInt(process.env.WORKER_PORT || '', 10) : BASE_PORT;
+  const PORT = process.env.START_MULTI
+    ? parseInt(process.env.WORKER_PORT || '4000', 10)
+    : BASE_PORT;
 
   if (!PORT || isNaN(PORT)) {
     console.error(
