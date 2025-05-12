@@ -135,9 +135,9 @@ npm run test
     ✓ should return 404 for GET /api/users/:id after user deletion
   ```
 
-## Using the API with Postman
+## Using the API (Testing with **Postman** and **CLI**)
 
-The API provides endpoints for managing users. Below are instructions for testing **successful** and **unsuccessful** requests using Postman. All requests should be sent to `http://localhost:4000/api` (the load balancer), which distributes them to worker processes.
+The API provides endpoints for managing users. Below are instructions for testing **successful** and **unsuccessful** requests (with Postman or CLI). All requests should be sent to `http://localhost:4000/api` (the load balancer), which distributes them to worker processes.
 
 ### User Data Format
 
@@ -152,7 +152,7 @@ Users are stored in `users.json` with the following structure:
 }
 ```
 
-### Endpoints (Testing with **Postman** and **CLI**)
+## Endpoints
 
 ## Testing the API with **_Postman_**
 
@@ -611,7 +611,7 @@ Then enter commands in another bash terminal.
 
 **Description:** To simulate an internal server error, you can temporarily modify the code to throw an unhandled error (for testing purposes only).
 
-#### First option:
+### First option:
 
 For example, edit `src/controllers/getAllUsers.ts` to throw an error in getAllUsers:
 
@@ -674,7 +674,7 @@ export const getAllUsers = async (res: ServerResponse, db: InMemoryDb) => {
    {"message":"Internal server error"}
    ```
 
-#### Second option:
+### Second option:
 
 For example, edit `src/controllers/createUser.ts` to throw an error in createUser:
 
