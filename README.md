@@ -18,9 +18,10 @@ This is a Node.js-based RESTful CRUD API for managing user records. The applicat
 
 ## Other technical requirements:
 
-- **npm**: Version 10.x or higher
+- **npm**: Version 10.x.x or higher
 - **Git**: For cloning the repository
 - **Postman**: For testing API endpoints
+- **curl**: Version 8.x.x or higher for testing API endpoints from CLI
 
 ## Installation
 
@@ -151,7 +152,9 @@ Users are stored in `users.json` with the following structure:
 }
 ```
 
-### Endpoints
+### Endpoints (Testing with **Postman** and **CLI**)
+
+## Testing the API with **_Postman_**
 
 #### 1. POST /api/users
 
@@ -356,6 +359,254 @@ Users are stored in `users.json` with the following structure:
       }
       ```
 
+## Testing the API with **_CLI_**
+
+The API can be tested from the command line using `curl`, a cross-platform tool for making HTTP requests. Below are examples of testing all CRUD operations, non-existing endpoints, and error handling. All requests are sent to `http://localhost:4000/api` (the load balancer), which distributes them to worker processes. Use the `-i` flag with `curl` to display HTTP status codes and headers.
+
+Ensure the application is running before testing:
+
+```bash
+npm run start:multi
+```
+
+Then enter commands in another bash terminal.
+
+### Prerequisites
+
+- **curl**: Available by default in Windows (PowerShell/Command Prompt), macOS, and Linux. Verify by running:
+  ```bash
+  curl --version
+  ```
+- **Command Line**: Use Command Prompt, PowerShell (Windows), or Terminal (macOS/Linux).
+
+### Endpoints
+
+#### 1. POST /api/users
+
+- **Description**: Create a new user.
+- **Successful Command**:
+
+  ```bash
+  curl -i -X POST http://localhost:4000/api/users -H "Content-Type: application/json" -d "{\"username\":\"Test User\",\"age\":25,\"hobbies\":[\"reading\",\"coding\"]}"
+  ```
+
+  - **Expected Response**:
+
+    ```
+    HTTP/1.1 201 Created
+    Content-Type: application/json
+    ...
+
+    {"id":"<uuid>","username":"Test User","age":25,"hobbies":["reading","coding"]}
+    ```
+
+- **Unsuccessful Command** (Invalid Data):
+
+  ```bash
+  curl -i -X POST http://localhost:4000/api/users -H "Content-Type: application/json" -d "{\"username\":\"\",\"age\":\"invalid\",\"hobbies\":null}"
+  ```
+
+  - **Expected Response**:
+
+    ```
+    HTTP/1.1 400 Bad Request
+    Content-Type: application/json
+    ...
+
+    {"message":"Invalid user data: Username (string), age (integer), and hobbies (array) are required"}
+    ```
+
+#### 2. GET /api/users
+
+- **Description**: Retrieve all users.
+- **Command**:
+
+  ```bash
+  curl -i http://localhost:4000/api/users
+  ```
+
+  - **Expected Response**:
+
+    ```
+    HTTP/1.1 200 OK
+    Content-Type: application/json
+    ...
+
+    [{"id":"<uuid>","username":"Test User","age":25,"hobbies":["reading","coding"]}]
+    ```
+
+#### 3. GET /api/users/:id
+
+- **Description**: Retrieve a user by ID.
+- **Successful Command**:
+
+  ```bash
+  curl -i http://localhost:4000/api/users/<valid-uuid>
+  ```
+
+  Replace `<valid-uuid>` with an existing user ID.
+
+  - **Expected Response**:
+
+    ```
+    HTTP/1.1 200 OK
+    Content-Type: application/json
+    ...
+
+    {"id":"<uuid>","username":"Test User","age":25,"hobbies":["reading","coding"]}
+    ```
+
+- **Unsuccessful Command** (Invalid ID):
+
+  ```bash
+  curl -i http://localhost:4000/api/users/invalid-id
+  ```
+
+  - **Expected Response**:
+
+    ```
+    HTTP/1.1 400 Bad Request
+    Content-Type: application/json
+    ...
+
+    {"message":"Invalid userId"}
+    ```
+
+- **Unsuccessful Command** (Non-existent ID):
+
+  ```bash
+  curl -i http://localhost:4000/api/users/123e4567-e89b-12d3-a456-426614174000
+  ```
+
+  - **Expected Response**:
+
+    ```
+    HTTP/1.1 404 Not Found
+    Content-Type: application/json
+    ...
+
+    {"message":"User not found"}
+    ```
+
+#### 4. PUT /api/users/:id
+
+- **Description**: Update an existing user.
+- **Successful Command**:
+
+  ```bash
+  curl -i -X PUT http://localhost:4000/api/users/<valid-uuid> -H "Content-Type: application/json" -d "{\"username\":\"Updated User\",\"age\":26,\"hobbies\":[\"writing\"]}"
+  ```
+
+  Replace `<valid-uuid>` with an existing user ID.
+
+  - **Expected Response**:
+
+    ```
+    HTTP/1.1 200 OK
+    Content-Type: application/json
+    ...
+
+    {"id":"252608d9-2f9f-4be2-99ea-50b35769136f","username":"Updated User","age":26,"hobbies":["writing"]}
+    ```
+
+- **Unsuccessful Command** (Invalid ID):
+
+  ```bash
+  curl -i -X PUT http://localhost:4000/api/users/invalid-id -H "Content-Type: application/json" -d "{\"username\":\"Updated User\",\"age\":26,\"hobbies\":[\"writing\"]}"
+  ```
+
+  - **Expected Response**:
+
+    ```
+    HTTP/1.1 400 Bad Request
+    Content-Type: application/json
+    ...
+
+    {"message":"Invalid userId"}
+    ```
+
+- **Unsuccessful Command** (Non-existent ID):
+
+  ```bash
+  curl -i -X PUT http://localhost:4000/api/users/123e4567-e89b-12d3-a456-426614174000 -H "Content-Type: application/json" -d "{\"username\":\"Updated User\",\"age\":26,\"hobbies\":[\"writing\"]}"
+  ```
+
+  - **Expected Response**:
+
+    ```
+    HTTP/1.1 404 Not Found
+    Content-Type: application/json
+    ...
+
+    {"message":"User not found"}
+    ```
+
+#### 5. DELETE /api/users/:id
+
+- **Description**: Delete a user by ID.
+- **Successful Command**:
+  ```bash
+  curl -i -X DELETE http://localhost:4000/api/users/<valid-uuid>
+  ```
+  Replace `<valid-uuid>` with an existing user ID.
+  - **Expected Response**:
+    ```
+    HTTP/1.1 204 No Content
+    Content-Type: application/json
+    ...
+    ```
+    (Empty body)
+- **Unsuccessful Command** (Invalid ID):
+
+  ```bash
+  curl -i -X DELETE http://localhost:4000/api/users/invalid-id
+  ```
+
+  - **Expected Response**:
+
+    ```
+    HTTP/1.1 400 Bad Request
+    Content-Type: application/json
+    ...
+
+    {"message":"Invalid userId"}
+    ```
+
+- **Unsuccessful Command** (Non-existent ID):
+
+  ```bash
+  curl -i -X DELETE http://localhost:4000/api/users/123e4567-e89b-12d3-a456-426614174000
+  ```
+
+  - **Expected Response**:
+
+    ```
+    HTTP/1.1 404 Not Found
+    Content-Type: application/json
+    ...
+
+    {"message":"User not found"}
+    ```
+
+#### Non-existing Endpoints
+
+- **Description**: Requesting a non-existing endpoint returns a 404 error.
+- **Command**:
+
+  ```bash
+  curl -i http://localhost:4000/api/invalid
+  ```
+
+  - **Expected Response**:
+
+    ```
+    HTTP/1.1 404 Not Found
+    Content-Type: application/json
+    ...
+
+    {"message":"Resource not found"}
+    ```
+
 ### Simulating a Server Error
 
 **Description:** To simulate an internal server error, you can temporarily modify the code to throw an unhandled error (for testing purposes only).
@@ -386,9 +637,9 @@ export const getAllUsers = async (res: ServerResponse, db: InMemoryDb) => {
    npm run start:multi
    ```
 
-3. **Send a POST request**:
+3. **Send a GET request** (with Postman):
 
-- **Method**: POST
+- **Method**: GET
 - **URL**: `http://localhost:4000/api/users`
 - **Body** (_row_, _JSON_):
   ```json
@@ -406,6 +657,22 @@ export const getAllUsers = async (res: ServerResponse, db: InMemoryDb) => {
       "message": "Internal Server Error"
     }
     ```
+
+4. **Send a GET request** (with CLI):
+
+   ```bash
+    curl -i http://localhost:4000/api/users
+   ```
+
+   - **Expected Response**:
+
+   ```
+   HTTP/1.1 500 Internal Server Error
+   Content-Type: application/json
+   ...
+
+   {"message":"Internal server error"}
+   ```
 
 #### Second option:
 
@@ -454,6 +721,94 @@ export const createUser = async (req: IncomingMessage, res: ServerResponse, db: 
     }
     ```
 
+4. **Send a POST request** (with CLI):
+
+   ```bash
+    curl -i -X POST http://localhost:4000/api/users -H "Content-Type: application/json" -d "{\"username\":\"Test User\",\"age\":25,\"hobbies\":[\"reading\",\"coding\"]}"
+   ```
+
+   - **Expected Response**:
+
+   ```
+   HTTP/1.1 500 Internal Server Error
+   Content-Type: application/json
+   ...
+
+   {"message": "Internal Server Error"}
+   ```
+
+### Testing Multi-Process Synchronization
+
+To verify data consistency across workers:
+
+1. **Create a User**:
+
+   ```bash
+   curl -i -X POST http://localhost:4000/api/users -H "Content-Type: application/json" -d "{\"username\":\"Sync User\",\"age\":30,\"hobbies\":[\"coding\"]}"
+   ```
+
+   Expected response:
+
+   ```
+   HTTP/1.1 201 Created
+   ...
+   {"id":"<uuid>","username":"Sync User","age":30,"hobbies":["coding"]}
+   ```
+
+   Save the `<uuid>` from the response.
+
+2. **Retrieve the User**:
+
+   ```bash
+   curl -i http://localhost:4000/api/users
+   ```
+
+   Expected response includes the created user:
+
+   ```
+   HTTP/1.1 200 OK
+   ...
+   [{"id":"<uuid>","username":"Sync User","age":30,"hobbies":["coding"]}]
+   ```
+
+3. **Delete the User**:
+
+   ```bash
+   curl -i -X DELETE http://localhost:4000/api/users/<uuid>
+   ```
+
+   Expected response:
+
+   ```
+   HTTP/1.1 204 No Content
+   ...
+   ```
+
+4. **Verify Deletion**:
+   ```bash
+   curl -i http://localhost:4000/api/users/<uuid>
+   ```
+   Expected response:
+   ```
+   HTTP/1.1 404 Not Found
+   ...
+   {"message":"User not found"}
+   ```
+
+- **Check Logs**:
+  ```bash
+  cat logs/app.log
+  ```
+  Verify that requests are handled by different workers (e.g., ports 4001, 4002, ...).
+
+### Notes
+
+- The `-i` flag includes HTTP headers (e.g., status code) in the output. Use `-v` for verbose output, including connection details.
+- Use bush Terminal in VSCode.
+- On Windows, run commands in Command Prompt or PowerShell. On macOS/Linux, use Terminal.
+- Ensure `curl` is installed or use alternatives like `httpie` (requires installation).
+- To save responses to a file, add `> output.json` to the command (e.g., `curl -i ... > output.json`).
+
 ### Testing Multi-Process Synchronization
 
 To verify that user data is consistent across workers:
@@ -485,8 +840,6 @@ The load balancer uses Round-robin to distribute requests, and a file-locking me
   ```bash
   cat dist/data/users.json
   ```
-
-## Project Structure
 
 ## Project Structure
 
